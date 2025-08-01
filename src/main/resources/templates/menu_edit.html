@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>編輯菜單</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+    <h2 class="mb-4">編輯菜單</h2>
+    <form th:action="@{/admin/menu/update}" th:object="${menu}" method="post" enctype="multipart/form-data" class="card p-4 shadow-sm">
+    		<!-- 隱藏欄位 -->
+    		<input type="hidden" th:field="*{menuId}" />
+    	<div class="mb-3">	
+    		<label for="menuName" class="form-label">菜單名稱</label>
+    		<input type="text" th:field="*{menuName}" class="form-control" id="menuName" required>
+    	</div>	
+    	<div class="mb-3">
+    		<label for="stock" class="form-label">庫存</label>
+    		<input type="number" th:field="*{stock}" class="form-control" id="stock" required>
+    	</div>	
+    	<div class="mb-3">	
+    		<label for="unitPrice" class="form-label">單價</label>
+    		<input type="number" th:field="*{unitPrice}" class="form-control" id="unitPrice" step="1" required>
+    	</div>
+    	<div class="mb-3">	
+    		<label for="description" class="form-label">描述</label>
+    		<textarea th:field="*{description}" class="form-control" id="description" rows="3"></textarea>
+    	</div>
+    	<div class="mb-3">	
+    		<label for="category" class="form-label">分類</label>
+    		<input type="text" th:field="*{category}" class="form-control" id="category">
+    	</div>
+    	<div>	
+    		<label for="status" class="form-label">狀態</label>
+    		<select th:field="*{status}" class="form-select" id="status">
+    			<option value="上架">上架</option>
+    			<option value="下架">下架</option>
+    		</select>
+    	</div>
+    	<div class="mb-3">	
+    		<label class="form-label">目前圖片:</label><br/>
+    		<img th:src="@{${menu.imageUrl}}" class="img-thumbnail" style="max-width: 200px;" alt="菜單圖片">
+    	</div>
+    	<div class="mb-3">	
+    		<label for="imageFie" class="form-label">更換圖片:</label>
+    		<input type="file" name="imageFile" class="form-control" id="imageFile">
+    	</div>
+    	<div class="d-flex justify-content-end mt-4">	
+    		<button type="submit" class="btn btn-primary me-2">更新菜單</button>
+    		<a th:href="@{/admin/menu/list}" class="btn btn-secondary">返回列表</a>
+    	</div>	
+    </form>
+    </div>
+</body>
+</html>

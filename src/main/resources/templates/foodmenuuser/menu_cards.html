@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>精選菜單</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-4">
+
+	<div class="text-end me-4">
+		<a href="/menu/cart" class="btn btn-outline-secondary position-relative">
+		🛒 購物車
+		<span id="cartCount" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+		0
+		</span>
+		</a>
+	</div>
+    <h2 class="text-center mb-4">精選菜單</h2>
+
+    <div class="row" th:if="${menuItems != null}">
+        <div class="col-md-4 mb-4" th:each="menu : ${menuItems}">
+            <div class="card h-100 shadow-sm">
+                <img th:src="@{${menu.imageUrl}}" class="card-img-top" alt="圖片" style="height: 200px; object-fit: cover;">
+                <div class="card-body text-center">
+                    <h5 class="card-title" th:text="${menu.menuName}">品名</h5>
+                    <p class="card-text">
+                        分類：<span th:text="${menu.category}"></span><br>
+                        價格：$<span class="unit-price" th:text="${menu.unitPrice}"></span><br>
+                        描述：<span th:text="${menu.description}"></span>
+                    </p>
+                    
+                    <button class="btn btn-outline-primary"
+                    		th:attr="data-id=${menu.menuId}, data-stock=${menu.stock}"
+                    		onclick="addToCart(this)">
+                    		加入購物車
+                    		</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+    function updateCartCount(){
+    	const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    	const count = cart.reduce((sum,item) => sum + item.quantity, 0);
+    	document.getElementById("cartCount").textContent = count;
+    }
+    
+    function addToCart(button){
+    	const stock = parseInt(button.getAttribute("data-stock"));
+    	
+    	if (stock === 0){
+    		alert("此商品已缺貨!");
+    		return;
+    	}
+    
+    const card = button.closest(".card");
+    const menuId = parseInt(button.getAttribute("data-id"));
+    const menuName = card.querySelector(".card-title").textContent;
+    const unitPrice = parseInt(card.querySelector(".unit-price").textContent);
+    const imageUrl = card.querySelector("img").getAttribute("src");
+    
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    
+    let existing = cart.find(item => item.menuId === menuId);
+    if(existing){
+    	existing.quantity += 1;
+     }else{
+    	cart.push({menuId, menuName, unitPrice, imageUrl, quantity : 1});
+    }
+    
+    localStorage.setItem("cart", JSON.stringify(cart));
+    updateCartCount();
+    alert("已加入購物車!");
+    }
+    
+    updateCartCount();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get("fromEcpay") === "1"){
+    localStorage.removeItem("cart");
+    updateCartCount();
+    }
+    </script>
+</body>
+</html>
